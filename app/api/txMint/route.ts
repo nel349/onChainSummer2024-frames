@@ -5,6 +5,7 @@ import { baseSepolia } from 'viem/chains';
 import BuyMeACoffeeABI from '../../_contracts/BuyMeACoffeeABI';
 import { BUY_MY_COFFEE_CONTRACT_ADDR } from '../../config';
 import type { FrameTransactionResponse } from '@coinbase/onchainkit/frame';
+import abiJson from './GameSessionNft.sol/GameSessionNft.json'
 
 async function getResponse(req: NextRequest): Promise<NextResponse | Response> {
   const body: FrameRequest = await req.json();
@@ -16,21 +17,21 @@ async function getResponse(req: NextRequest): Promise<NextResponse | Response> {
   }
 
   const data = encodeFunctionData({
-    abi: BuyMeACoffeeABI,
-    functionName: 'buyCoffee',
-    args: [parseEther('1'), 'Coffee all day!'],
+    abi: abiJson.abi,
+    functionName: 'mint',
+    args: ["0xA75b12AEE788814e3AdA413EB58b7a844f0D75A3", 'Coffee all day!'],
   });
 
   const txData: FrameTransactionResponse = {
     chainId: `eip155:${baseSepolia.id}`,
     method: 'eth_sendTransaction',
     params: {
-      abi: [],
       data,
-      to: BUY_MY_COFFEE_CONTRACT_ADDR,
-      value: parseEther('0.00004').toString(), // 0.00004 ETH
+      to: "0x7D083167EFA0910B3dD327140cfd218397291356",
+      // value: parseEther('0.00004').toString(), // 0.00004 ETH
     },
   };
+
   return NextResponse.json(txData);
 }
 

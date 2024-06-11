@@ -13,6 +13,12 @@ const frameMetadata = getFrameMetadata({
       target: `${NEXT_PUBLIC_URL}/api/tx`,
       postUrl: `${NEXT_PUBLIC_URL}/api/tx-success`,
     },
+    {
+      action: 'tx',
+      label: 'Mint NFT',
+      target: `${NEXT_PUBLIC_URL}/api/txMint`,
+      postUrl: `${NEXT_PUBLIC_URL}/api/tx-success`,
+    }
   ],
   image: {
     src: `${NEXT_PUBLIC_URL}/park-3.png`,
@@ -41,6 +47,7 @@ export default function Page() {
   return (
     <>
       <h1>zizzamia.xyz</h1>
+      <h2>{NEXT_PUBLIC_URL}</h2>
     </>
   );
 }
