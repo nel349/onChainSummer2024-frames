@@ -13,15 +13,16 @@
   "author": "https://twitter.com/Zizzamia",
   "license": "MIT",
   "dependencies": {
+    "@chainlink/env-enc": "^1.0.5",
     "@coinbase/onchainkit": "latest",
+    "axios": "^1.7.2",
+    "axios-cache-interceptor": "^1.5.3",
     "next": "13.5.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "satori": "^0.10.13",
-    "viem": "^2.7.1",
     "sharp": "0.32",
-    "axios": "^1.6.8",
-    "@chainlink/env-enc": "^1.0.5"
+    "viem": "^2.7.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.8",

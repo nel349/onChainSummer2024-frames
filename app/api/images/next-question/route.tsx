@@ -18,12 +18,12 @@ export async function GET(req: Request) {
     const questionPage = parseInt(searchParams.get("page") ?? "0");
     const frameId = searchParams.get("frameId") ?? "";
 
-    console.log('frameId:', frameId);
-    console.log('questionPage:', questionPage);
+    // console.log('frameId:', frameId);
+    // console.log('questionPage:', questionPage);
 
     const questions = await _getQuestions(frameId);
 
-    console.log('questions:', questions);
+    // console.log('questions:', questions);
 
     const svg = await satori(
       questionHtml(questionPage, questions, {} as FrameSession)
@@ -94,7 +94,7 @@ const _getQuestions = async (frameId: string) => {
 
   try {
     frameSession = await getFrameSession(frameId);
-    console.log('frame session: ', frameSession)
+    // console.log('frame session: ', frameSession)
     // previousState.numberOfQuestions = previousState.frameSession.numberOfQuestions;
     if (!frameSession) {
       console.log('No frame session found')
