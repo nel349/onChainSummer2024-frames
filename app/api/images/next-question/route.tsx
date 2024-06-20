@@ -21,12 +21,11 @@ export async function GET(req: Request) {
     // console.log('frameId:', frameId);
     // console.log('questionPage:', questionPage);
 
-    const questions = await _getQuestions(frameId);
-
-    // console.log('questions:', questions);
+    const frameSession = await getFrameSession(frameId);
+    const questions = await _getQuestions(frameSession);
 
     const svg = await satori(
-      questionHtml(questionPage, questions, {} as FrameSession)
+      questionHtml(questionPage, questions, frameSession)
       ,
       {
         width: 900, height: 600, fonts: [{
@@ -82,23 +81,23 @@ const getOptionText = (questions: Question[], index: number, optionIndex: number
   return option ? option : '';
 };
 
-const footer = (questionIndex: number, session?: FrameSession) => {
+const footer = (questionIndex: number, session: FrameSession) => {
   return <p style={styles.footer}>Question {questionIndex + 1} / {session?.numberOfQuestions}</p>
 }
 
-const _getQuestions = async (frameId: string) => {
+const _getQuestions = async (frameSession: FrameSession) => {
 
-  let frameSession: FrameSession = {} as FrameSession;
+  // let frameSession: FrameSession = {} as FrameSession;
   let questions = [] as Question[];
   // let solanaAddress = '';
 
   try {
-    frameSession = await getFrameSession(frameId);
+    // frameSession = await getFrameSession(frameSession.frameId);
     // console.log('frame session: ', frameSession)
     // previousState.numberOfQuestions = previousState.frameSession.numberOfQuestions;
-    if (!frameSession) {
-      console.log('No frame session found')
-    }
+    // if (!frameSession) {
+    //   console.log('No frame session found')
+    // }
 
     questions = await getQuestions(frameSession.metaphor_id);
     // const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY ?? "");
@@ -123,7 +122,7 @@ const _getQuestions = async (frameId: string) => {
   }
 }
 
-const questionHtml = (questionIndex: number, questions: Question[], session?: FrameSession) => {
+const questionHtml = (questionIndex: number, questions: Question[], session: FrameSession) => {
   return (
     <div
       style={styles.container}
