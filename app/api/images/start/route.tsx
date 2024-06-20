@@ -65,7 +65,7 @@ const initialHtml = () => {
         <h1
           style={styles.header2}
         >
-          Press the "Next" button to start the game.
+          Click "Start Game" to begin!
         </h1>
         <h1
           style={styles.header2}

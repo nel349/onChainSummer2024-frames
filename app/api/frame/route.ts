@@ -22,8 +22,8 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const gamePhase = searchParams.get("gamePhase") as string;
 
   // console.log('message', message);
-  console.log('frameId:', frameId);
-  console.log('gamePhase:', gamePhase);
+  // console.log('frameId:', frameId);
+  // console.log('gamePhase:', gamePhase);
   // console.log('isValid', isValid);
 
   const startImageUrl = `${NEXT_PUBLIC_URL}/api/images/start`
@@ -45,27 +45,27 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     );
   }
 
+  const isPlaying = gamePhase === GamePhase.Playing;
+
   return new NextResponse(
     getFrameHtmlResponse({
       buttons: [
-        {
-          label: `State question: ${state?.question || 0}`,
+        gamePhase === GamePhase.Playing && {
+          label: `Next: qi: ${state?.question || 0}`,
+          action: 'post',
+          target: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${gamePhase}`,
         },
-        {
+        gamePhase === GamePhase.Initial && {
           label: 'Start Game',
-        },
-        {
-          action: 'post_redirect',
-          label: 'Dog pictures',
-        },
-      ],
+          action: 'post',
+          target: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${GamePhase.Playing}`,
+        }
+      ].filter(Boolean),
       image: {
         src: gamePhase === GamePhase.Initial ? startImageUrl : nextQuestionImageUrl,
       },
-      postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
       state: {
-        page: state?.question + 1,
-        time: new Date().toISOString(),
+        question: isPlaying ? state?.question + 1 : state?.question
       },
     }),
   );

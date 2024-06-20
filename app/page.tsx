@@ -33,7 +33,7 @@ const frameMetadata = getFrameMetadata({
     src: imageUrl,
     aspectRatio: '1.91:1',
   },
-  postUrl: `${NEXT_PUBLIC_URL}/api/frame?frameId=66249df51c3fd6482546a4c1&gameState=${GamePhase.Initial}`,
+  postUrl: `${NEXT_PUBLIC_URL}/api/frame?frameId=66249df51c3fd6482546a4c1&gamePhase=${GamePhase.Initial}`,
 });
 
 export const metadata: Metadata = {
