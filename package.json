@@ -6,7 +6,8 @@
     "dev": "next dev",
     "format": "prettier --log-level warn --write .",
     "start": "next start",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devl": "MODE=local next dev"
   },
   "keywords": [],
   "author": "https://twitter.com/Zizzamia",
@@ -18,7 +19,9 @@
     "react-dom": "^18.2.0",
     "satori": "^0.10.13",
     "viem": "^2.7.1",
-    "sharp": "0.32"
+    "sharp": "0.32",
+    "axios": "^1.6.8",
+    "@chainlink/env-enc": "^1.0.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.8",

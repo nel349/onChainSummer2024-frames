@@ -1,14 +1,20 @@
 import { getFrameMetadata } from '@coinbase/onchainkit/frame';
 import type { Metadata } from 'next';
 import { NEXT_PUBLIC_URL } from './config';
+import * as envEnc from "@chainlink/env-enc";
+import { GamePhase } from '.';
+
+envEnc.config();
 
 
 const imageUrl = `${NEXT_PUBLIC_URL}/api/images/splash`;
 
+
+
 const frameMetadata = getFrameMetadata({
   buttons: [
     {
-      label: 'Story time',
+      label: 'Start Test', // Start the game
     },
     {
       action: 'tx',
@@ -27,10 +33,7 @@ const frameMetadata = getFrameMetadata({
     src: imageUrl,
     aspectRatio: '1.91:1',
   },
-  input: {
-    text: 'Tell me a story',
-  },
-  postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
+  postUrl: `${NEXT_PUBLIC_URL}/api/frame?frameId=66249df51c3fd6482546a4c1&gameState=${GamePhase.Initial}`,
 });
 
 export const metadata: Metadata = {
