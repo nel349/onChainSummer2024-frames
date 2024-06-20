@@ -6,9 +6,7 @@ import * as fs from "fs";
 import styles from './route.module'
 import { Question } from "../../../game-domain/question";
 import { FrameSession } from "../../../game-domain/frame-session";
-import { State } from "../../..";
 import { getFrameSession, getQuestions } from "../../../mongo/frame-session";
-import { FrameData } from "@coinbase/onchainkit/frame";
 
 const fontPath = join(process.cwd(), "assets/fonts/umbrage2.ttf");
 let fontData = fs.readFileSync(fontPath);
@@ -18,10 +16,17 @@ export async function GET(req: Request) {
 
     const {searchParams} = new URL(req.url);
     const questionPage = parseInt(searchParams.get("page") ?? "0");
+    const frameId = searchParams.get("frameId") ?? "";
 
+    console.log('frameId:', frameId);
+    console.log('questionPage:', questionPage);
+
+    const questions = await _getQuestions(frameId);
+
+    console.log('questions:', questions);
 
     const svg = await satori(
-      questionHtml(questionPage, [], {} as FrameSession)
+      questionHtml(questionPage, questions, {} as FrameSession)
       ,
       {
         width: 900, height: 600, fonts: [{
@@ -81,7 +86,7 @@ const footer = (questionIndex: number, session?: FrameSession) => {
   return <p style={styles.footer}>Question {questionIndex + 1} / {session?.numberOfQuestions}</p>
 }
 
-const _getQuestions = async (frameId: string, frameData: FrameData) => {
+const _getQuestions = async (frameId: string) => {
 
   let frameSession: FrameSession = {} as FrameSession;
   let questions = [] as Question[];
@@ -110,10 +115,11 @@ const _getQuestions = async (frameId: string, frameData: FrameData) => {
 
     // console.log('Solana address:', solanaAddress);
     // Get questions given the metaphor id
-    
+    return questions;
   }
   catch (e) {
     console.log('error', e)
+    return [];
   }
 }
 
