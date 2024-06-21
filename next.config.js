@@ -1,5 +1,8 @@
-module.exports = {
-    experimental: {
-      serverActions: true,
-    },
-  };
+/** @type {import('next').NextConfig} */
+const config = {
+  experimental: {
+    serverActions: true,
+  },
+};
+
+module.exports = config;
