@@ -1,27 +1,29 @@
-import type { Metadata } from 'next';
+import type { Metadata, ResolvingMetadata } from 'next';
 import { NEXT_PUBLIC_URL } from './config';
 import * as envEnc from "@chainlink/env-enc";
-import { GamePhase } from '.';
-
 envEnc.config();
-
 
 const imageUrl = `${NEXT_PUBLIC_URL}/api/images/splash`;
 
-export const metadata: Metadata = {
-  title: 'zizzamia.xyz',
-  description: 'LFG',
-  openGraph: {
-    title: 'zizzamia.xyz',
-    description: 'LFG',
-    images: [`${NEXT_PUBLIC_URL}/park-1.png`],
-  },
-  other: {}, // Initialize with an empty object
-};
+type Props = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
 
-(async () => {
+export async function generateMetadata(  
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const { getFrameMetadata } = await import('@coinbase/onchainkit/frame');
-  const frameMetadata = getFrameMetadata({
+  
+
+  console.log("query: ", params)
+  console.log("searchParams: ", searchParams)
+  // console.log("parent: ", parent)
+
+  const { frameId, gamePhase } = searchParams;
+
+  const frameMetadata = await getFrameMetadata({
     buttons: [
       {
         label: 'Start Test', // Start the game
@@ -43,13 +45,22 @@ export const metadata: Metadata = {
       src: imageUrl,
       aspectRatio: '1.91:1',
     },
-    postUrl: `${NEXT_PUBLIC_URL}/api/frame?frameId=66249df51c3fd6482546a4c1&gamePhase=${GamePhase.Initial}`,
+    postUrl: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${gamePhase}`,
   });
 
-  metadata.other = {
-    ...frameMetadata,
+  return {
+    title: 'zizzamia.xyz',
+    description: 'LFG',
+    openGraph: {
+      title: 'zizzamia.xyz',
+      description: 'LFG',
+      images: [`${NEXT_PUBLIC_URL}/park-1.png`],
+    },
+    other: {
+      ...frameMetadata,
+    },
   };
-})();
+}
 
 export default function Page() {
   return (
