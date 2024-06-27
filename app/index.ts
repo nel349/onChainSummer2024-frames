@@ -15,10 +15,10 @@ export enum GamePhase {
 }
 
 export type State = {
-    questionIndex: number
-    gameState: 'initial' | 'playing' | 'finished'
-    questions: Question[]
-    correctAnswers: number
-    numberOfQuestions: number
-    frameSession: FrameSession
+    questionIndex?: number
+    gameState?: 'initial' | 'playing' | 'finished'
+    questions?: Question[]
+    correctAnswers?: number
+    numberOfQuestions?: number
+    frameSession?: FrameSession
 }

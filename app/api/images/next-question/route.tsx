@@ -86,34 +86,11 @@ const footer = (questionIndex: number, session: FrameSession) => {
 }
 
 const _getQuestions = async (frameSession: FrameSession) => {
-
   // let frameSession: FrameSession = {} as FrameSession;
   let questions = [] as Question[];
-  // let solanaAddress = '';
 
   try {
-    // frameSession = await getFrameSession(frameSession.frameId);
-    // console.log('frame session: ', frameSession)
-    // previousState.numberOfQuestions = previousState.frameSession.numberOfQuestions;
-    // if (!frameSession) {
-    //   console.log('No frame session found')
-    // }
-
     questions = await getQuestions(frameSession.metaphor_id);
-    // const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY ?? "");
-
-    // console.log("api key:", process.env.NEYNAR_API_KEY)
-
-    // const fid = frameData?.fid ?? 1;
-
-    // const userBulkResponse = client.fetchBulkUsers([fid]);
-
-    // console.log('user bulk response:', (await userBulkResponse).users[0]);
-
-    // solanaAddress = (await userBulkResponse).users[0].verified_addresses.sol_addresses[0];
-
-    // console.log('Solana address:', solanaAddress);
-    // Get questions given the metaphor id
     return questions;
   }
   catch (e) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { NEXT_PUBLIC_URL } from '../../config';
 import { GamePhase } from '../..';
+import { getFrameSession } from '../../mongo/frame-session';
 
 async function getResponse(req: NextRequest): Promise<NextResponse> {
 
@@ -22,6 +23,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const {searchParams} = new URL(req.url);
   const frameId = searchParams.get("frameId") as string;
   const gamePhase = searchParams.get("gamePhase") as string;
+  const { numberOfQuestions} = await getFrameSession(frameId);
 
   // console.log('message', message);
   // console.log('frameId:', frameId);
@@ -30,12 +32,11 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   const startImageUrl = `${NEXT_PUBLIC_URL}/api/images/start`
   const nextQuestionImageUrl = `${NEXT_PUBLIC_URL}/api/images/next-question?frameId=${frameId}&page=${state.question}`
+  const finishedImageUrl = `${NEXT_PUBLIC_URL}/api/images/finished?frameId=${frameId}`
 
   if (!isValid) {
     return new NextResponse('Message not valid', { status: 500 });
   }
-
-
 
   /**
    * Use this code to redirect to a different page
@@ -52,7 +53,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   return new NextResponse(
     getFrameHtmlResponse({
       buttons: [
-        gamePhase === GamePhase.Playing && {
+        gamePhase === GamePhase.Playing && state.question < numberOfQuestions-1 && {
           label: `Next: qi: ${state?.question || 0}`,
           action: 'post',
           target: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${gamePhase}`,
@@ -61,10 +62,22 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
           label: 'Start Game',
           action: 'post',
           target: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${GamePhase.Playing}`,
-        }
+        },
+        gamePhase === GamePhase.Playing && state.question >= numberOfQuestions-1 && {
+          label: 'End Game',
+          action: 'post',
+          target: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${GamePhase.Finished}`,
+        },
+        gamePhase === GamePhase.Finished && {
+          action: 'tx',
+          label: 'Submit Score',
+          target: `${NEXT_PUBLIC_URL}/api/txMint`,
+          postUrl: `${NEXT_PUBLIC_URL}/api/tx-success`,
+        },
       ].filter(Boolean),
       image: {
-        src: gamePhase === GamePhase.Initial ? startImageUrl : nextQuestionImageUrl,
+        src: gamePhase === GamePhase.Initial ? startImageUrl : 
+        gamePhase === GamePhase.Finished ? finishedImageUrl : nextQuestionImageUrl
       },
       state: {
         question: isPlaying ? state?.question + 1 : state?.question
