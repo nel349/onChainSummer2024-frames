@@ -17,17 +17,17 @@ export async function GET(req: Request) {
 
     const {searchParams} = new URL(req.url);
     const frameId = searchParams.get("frameId") ?? "";
-    const correctAnswers = searchParams.get("correctAnswers") ?? "1";
+    const score = searchParams.get("score") ?? "0";
     const {numberOfQuestions} = await getFrameSession(frameId);
 
-    console.log('correctAnswers:', correctAnswers);
+    console.log('score:', score);
     console.log('numberOfQuestions:', numberOfQuestions);
 
     // console.log('frameId:', frameId);
     // console.log('questionPage:', questionPage);
     
     const svg = await satori(
-      EndHtml({correctAnswers: parseInt(correctAnswers), numberOfQuestions})
+      EndHtml({score: parseInt(score)})
       ,
       {
         width: 900, height: 600, fonts: [{
@@ -55,12 +55,6 @@ export async function GET(req: Request) {
 }
 
 const EndHtml = (state: State) => {
-
-  if (!state.correctAnswers || !state.numberOfQuestions) {
-    return <div style={{color: 'black'}}>Error</div>;
-  }
-
-  const score = Math.floor(state.correctAnswers / state.numberOfQuestions * 100);
   return (
     <div
       style={{
@@ -80,18 +74,18 @@ const EndHtml = (state: State) => {
         <h1
           style={styles.header2}
         >
-          Score: {score}%
+          Score: {state.score}%
         </h1>
 
         <h1
           style={styles.header2}
         >
-          blach blah blah
+          Click on Submit Score to be eligible for prizes!
         </h1>
         <h1
           style={styles.header2}
         >
-          blach blah blah
+          Compete with your friends!
         </h1>
       </div>
 

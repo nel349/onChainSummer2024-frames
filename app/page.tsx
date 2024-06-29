@@ -23,9 +23,14 @@ export async function generateMetadata(
 
   const { frameId, gamePhase } = searchParams;
 
+  /* 5 questions*/
   // Testing frame: https://on-chain-summer2024-frames.vercel.app?frameId=667f44be75a9572e285551d6&gamePhase=initial
   // Testing frame: https://8cb9-2600-100f-a103-4c55-f829-f3c5-21d9-a8a5.ngrok-free.app?frameId=667f44be75a9572e285551d6&gamePhase=initial
 
+  /*1 question
+  Testing frame: https://on-chain-summer2024-frames.vercel.app?frameId=667fa075eda6c6305266331a&gamePhase=initial
+  Testing frame: https://8cb9-2600-100f-a103-4c55-f829-f3c5-21d9-a8a5.ngrok-free.app?frameId=667fa075eda6c6305266331a&gamePhase=initial
+  */
   const frameMetadata = await getFrameMetadata({
     buttons: [
       {

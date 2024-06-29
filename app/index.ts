@@ -18,7 +18,7 @@ export type State = {
     questionIndex?: number
     gameState?: 'initial' | 'playing' | 'finished'
     questions?: Question[]
-    correctAnswers?: number
+    score?: number
     numberOfQuestions?: number
     frameSession?: FrameSession
 }

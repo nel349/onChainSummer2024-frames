@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { NEXT_PUBLIC_URL } from '../../config';
 import { GamePhase } from '../..';
 import { getFrameSession, getQuestions } from '../../mongo/frame-session';
+import { Question } from '../../game-domain/question';
 
 async function getResponse(req: NextRequest): Promise<NextResponse> {
 
@@ -29,34 +30,19 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const { numberOfQuestions } = await getFrameSession(frameId);
   const frameSession = await getFrameSession(frameId);
   const questions = await getQuestions(frameSession.metaphor_id);
-  // console.log('questions', questions);
+  console.log('questions', questions);
 
   // console.log('message', message);
   // console.log('frameId:', frameId);
   // console.log('gamePhase:', gamePhase);
   // console.log('isValid', isValid);
 
-  const startImageUrl = `${NEXT_PUBLIC_URL}/api/images/start`
-  const nextQuestionImageUrl = `${NEXT_PUBLIC_URL}/api/images/next-question?frameId=${frameId}&page=${state.question}`
-  const finishedImageUrl = `${NEXT_PUBLIC_URL}/api/images/finished?frameId=${frameId}`
+
 
   if (!isValid) {
     return new NextResponse('Message not valid', { status: 500 });
   }
-
-  /**
-   * Use this code to redirect to a different page
-   */
-  // if (message?.button === 3) {
-  //   return NextResponse.redirect(
-  //     'https://www.google.com/search?q=cute+dog+pictures&tbm=isch&source=lnms',
-  //     { status: 302 },
-  //   );
-  // }
-
   const isPlaying = gamePhase === GamePhase.Playing;
-
-  
   // Update the state with the pressed button
   if (isPlaying && previousResponseIndex && action === 'next') {
 
@@ -70,6 +56,11 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     console.log('state', state);
     console.log('message.button: ', message.button);
   }
+
+  const startImageUrl = `${NEXT_PUBLIC_URL}/api/images/start`
+  const nextQuestionImageUrl = `${NEXT_PUBLIC_URL}/api/images/next-question?frameId=${frameId}&page=${state.question}`
+  const score = calculateScore(state.savedResponses, questions, numberOfQuestions)
+  const finishedImageUrl = `${NEXT_PUBLIC_URL}/api/images/finished?frameId=${frameId}&score=${score}`
 
   return new NextResponse(
     getFrameHtmlResponse({
@@ -97,9 +88,10 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
           target: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${GamePhase.Playing}`,
         },
         gamePhase === GamePhase.Playing && state.question >= numberOfQuestions && {
-          label: 'End Game',
-          action: 'post',
-          target: `${NEXT_PUBLIC_URL}/api/frame?frameId=${frameId}&gamePhase=${GamePhase.Finished}`,
+          label: 'Submit Score',
+          action: 'tx',
+          target: `${NEXT_PUBLIC_URL}/api/txJoinGame?frameId=${frameId}&score=${score}`,
+          postUrl: `${NEXT_PUBLIC_URL}/api/tx-success`,
         },
         gamePhase === GamePhase.Finished && {
           action: 'tx',
@@ -118,6 +110,23 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
       },
     }),
   );
+}
+
+const calculateScore = (savedResponses: string[], questions: Question[], numberOfQuestions: number) => {
+
+  // calculate the score
+
+  // create an array with only the answers.
+  const answers = questions.map(
+    (question) => question.answer
+  )
+
+  // compare the answers with the savedResponses
+  const correctAnswers = answers.filter(
+    (answer, index) => answer === savedResponses[index]
+  )
+
+  return correctAnswers.length / numberOfQuestions * 100;  
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
